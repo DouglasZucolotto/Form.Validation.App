@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         val edName = findViewById<TextInputEditText>(R.id.edName)
         val edNameL = findViewById<TextInputLayout>(R.id.edNameL)
 
-        edName.addTextChangedListener(object : TextWatcher{
+        edName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(s: Editable) {
@@ -27,23 +27,55 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        val edEmail = findViewById<TextInputEditText>(R.id.edEmail)
+        val edEmailL = findViewById<TextInputLayout>(R.id.edEmailL)
+
+        edEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                validateEmail(edEmail, edEmailL)
+            }
+
+        })
+
         val validarBtn = findViewById<Button>(R.id.validarBtn)
         validarBtn.setOnClickListener {
-            if (validateName(edName, edNameL)){
-                Toast.makeText(this,"Sucesso!",Toast.LENGTH_LONG).show()
-            }else{
-                Toast.makeText(this,"Falhou!",Toast.LENGTH_LONG).show()
+            if (validateName(edName, edNameL)
+                && validateEmail(edEmail, edEmailL)) {
+                Toast.makeText(this, "Sucesso!", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Falhou!", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun validateName(edName: EditText, edNameL: TextInputLayout) :Boolean{
-       return when{
-            edName.text.toString().trim().isEmpty() ->{
+    private fun validateEmail(edEmail: TextInputEditText, edEmailL: TextInputLayout): Boolean {
+        val emailPattern = Regex("[a-zA-Z\\d._-]+@[a-z]+\\.+[a-z]+")
+        return when {
+            edEmail.text.toString().trim().isEmpty() -> {
+                edEmailL.error = "Obrigatório!"
+                false
+            }
+            !edEmail.text.toString().trim().matches(emailPattern) -> {
+                edEmailL.error = "Insira um e-mail válido!"
+                false
+            }
+            else -> {
+                edEmailL.error = null
+                true
+            }
+        }
+    }
+
+    private fun validateName(edName: EditText, edNameL: TextInputLayout): Boolean {
+        return when {
+            edName.text.toString().trim().isEmpty() -> {
                 edNameL.error = "Obrigatório!"
                 false
             }
-            else ->{
+
+            else -> {
                 edNameL.error = null
                 true
             }
