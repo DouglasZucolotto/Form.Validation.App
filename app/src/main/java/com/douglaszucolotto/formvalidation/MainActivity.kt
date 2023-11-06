@@ -39,13 +39,48 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        val edPassword = findViewById<TextInputEditText>(R.id.edPassword)
+        val edPasswordL = findViewById<TextInputLayout>(R.id.edPasswordL)
+
+        edPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                validatePassword(edPassword, edPasswordL)
+            }
+
+        })
+
         val validarBtn = findViewById<Button>(R.id.validarBtn)
         validarBtn.setOnClickListener {
-            if (validateName(edName, edNameL)
-                && validateEmail(edEmail, edEmailL)) {
+            if (validateName(edName, edNameL) && validateEmail(edEmail, edEmailL)
+                && validatePassword(edPassword, edPasswordL)
+                ) {
                 Toast.makeText(this, "Sucesso!", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "Falhou!", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun validatePassword(
+        edPassword: TextInputEditText, edPasswordL: TextInputLayout
+    ): Boolean {
+        return when {
+            edPassword.text.toString().trim().isEmpty() -> {
+                edPasswordL.error = "Obrigatório!"
+                false
+            }
+
+            edPassword.text.toString().trim().length < 8 || edPassword.text.toString()
+                .trim().length > 10 -> {
+                edPasswordL.error = "A senha deve ter entre 8 e 10 caracteres!"
+                false
+            }
+
+            else -> {
+                edPasswordL.error = null
+                true
             }
         }
     }
@@ -57,10 +92,12 @@ class MainActivity : AppCompatActivity() {
                 edEmailL.error = "Obrigatório!"
                 false
             }
+
             !edEmail.text.toString().trim().matches(emailPattern) -> {
                 edEmailL.error = "Insira um e-mail válido!"
                 false
             }
+
             else -> {
                 edEmailL.error = null
                 true
