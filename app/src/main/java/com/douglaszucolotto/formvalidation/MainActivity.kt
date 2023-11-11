@@ -51,14 +51,59 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        val edConPassword = findViewById<TextInputEditText>(R.id.edConPassword)
+        val edConPasswordL = findViewById<TextInputLayout>(R.id.edConPasswordL)
+
+        edConPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                validateConPassword(edPassword, edConPassword, edConPasswordL)
+            }
+
+        })
+
         val validarBtn = findViewById<Button>(R.id.validarBtn)
         validarBtn.setOnClickListener {
             if (validateName(edName, edNameL) && validateEmail(edEmail, edEmailL)
-                && validatePassword(edPassword, edPasswordL)
-                ) {
+                && validatePassword(edPassword, edPasswordL) && validateConPassword(
+                    edPassword,
+                    edConPassword,
+                    edConPasswordL
+                )
+            ) {
                 Toast.makeText(this, "Sucesso!", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "Falhou!", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun validateConPassword(
+        edPassword: TextInputEditText,
+        edConPassword: TextInputEditText,
+        edConPasswordL: TextInputLayout
+    ): Boolean {
+        return when {
+            edConPassword.text.toString().trim().isEmpty() -> {
+                edConPasswordL.error = "Obrigatório!"
+                false
+            }
+
+            edConPassword.text.toString().trim().length < 8 || edConPassword.text.toString()
+                .trim().length > 10 -> {
+                edConPasswordL.error = "A senha deve ter entre 8 e 10 caracteres!"
+                false
+            }
+
+            edPassword.text.toString().trim() != edConPassword.text.toString().trim() -> {
+                edConPasswordL.error = "As senhas não coincidem"
+                false
+            }
+
+            else -> {
+                edConPasswordL.error = null
+                true
             }
         }
     }
